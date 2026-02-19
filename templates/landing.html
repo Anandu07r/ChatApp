@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flock Ramp | Connect Seamlessly</title>
+    <title>ChatApp</title>
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -217,32 +217,38 @@
                 style="margin-top: -4px;">
                 <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="currentColor" />
             </svg>
-            Flock Ramp
+            Chat App
         </a>
 
-        <div class="nav-links">
-            <a href="#" class="nav-link-custom">Businesses</a>
-            <a href="#" class="nav-link-custom">Individuals</a>
-            <a href="#" class="nav-link-custom">Pricing</a>
-            <div class="d-flex gap-3 ms-4">
+         <div class="nav-links">
+            <a href="#" class="nav-link-custom"></a>
+            <a href="#" class="nav-link-custom"></a>
+            <a href="#" class="nav-link-custom"></a>
+            <div class="d-flex gap-3 ms-4"> 
                 <a href="{% url 'login' %}" class="btn-ramp-login">Log in</a>
                 <a href="{% url 'register' %}" class="btn-ramp-signup">Sign up</a>
             </div>
         </div>
     </nav>
 
-    <main class="ramp-hero">
-        <div class="fade-up">
-            <div class="hero-badge">Secure Messaging Reborn</div>
-            <h1>The New Benchmark<br>of Real-Time Chat</h1>
-            <p>Connect with teams and friends using a platform designed for the highest standard of security, speed, and
-                premium user experience.</p>
-            <div class="hero-actions justify-content-center">
-                <a href="{% url 'register' %}" class="btn-hero-primary">Get Started New</a>
-            </div>
-        </div>
-    </main>
+<main class="ramp-hero">
+    <div class="fade-up">
 
+        <div class="hero-badge">Next-Gen Messaging</div>
+
+        <h1>Experience the Future<br>of Real-Time Chat</h1>
+        <p>
+        Communicate instantly with friends, teams, and communities on a platform built for lightning speed,
+        advanced security, and a beautifully seamless messaging experience.
+    </p>
+    <div class="hero-actions justify-content-center">
+            <a href="{% url 'register' %}" class="btn-hero-primary">
+                Get Started Free →
+            </a>
+        </div>
+
+    </div>
+</main>
 </body>
 
 </html>
