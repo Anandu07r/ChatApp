@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign up | Flock Ramp{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --bg-dark: #09090B;
+        --text-main: #FFFFFF;
+        --text-muted: #A1A1AA;
+        --accent: #7C3AED;
+        --gradient: linear-gradient(90deg, #7C3AED 0%, #4F46E5 100%);
+        --glass-border: rgba(255, 255, 255, 0.08);
+    }
+
+    body {
+        background-color: var(--bg-dark) !important;
+        color: var(--text-main) !important;
+    }
+
+    /* ---------- NAVBAR ---------- */
+    .ramp-nav {
+        padding: 20px 5%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        background: rgba(9, 9, 11, 0.8);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--glass-border);
+    }
+
+    .ramp-logo {
+        font-size: 22px;
+        font-weight: 700;
+        text-decoration: none;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .ramp-logo span {
+        color: var(--accent);
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 25px;
+        align-items: center;
+    }
+
+    .nav-link-custom {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .nav-link-custom:hover {
+        color: white;
+    }
+
+    .btn-ramp-login {
+        color: white;
+        padding: 8px 22px;
+        border-radius: 10px;
+        border: 1px solid var(--glass-border);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-ramp-signup {
+        background: white;
+        color: black;
+        padding: 8px 22px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+    }
+
+    /* ---------- AUTH CONTENT ---------- */
+    .auth-no-card-wrapper {
+        min-height: 100vh;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 85px 20px 30px;
+        /* Space for fixed nav */
+    }
+
+    .auth-no-card-container {
+        width: 100%;
+        max-width: 440px;
+        animation: fadeUp 0.8s ease-out;
+    }
+
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .auth-header-nc h1 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        letter-spacing: -0.5px;
+        text-align: left;
+    }
+
+    .form-group-nc {
+        margin-bottom: 12px;
+    }
+
+    .form-label-nc {
+        display: block;
+        font-weight: 500;
+        font-size: 13px;
+        color: #FFFFFF;
+        margin-bottom: 6px;
+    }
+
+    .form-control-nc {
+        width: 100%;
+        background-color: #141417;
+        border: 1px solid #27272A;
+        border-radius: 12px;
+        padding: 11px 16px;
+        color: white;
+        font-size: 14px;
+        transition: all 0.2s;
+    }
+
+    .form-control-nc:focus {
+        outline: none;
+        border-color: var(--accent);
+        background-color: #18181B;
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+    }
+
+    .btn-ramp-nc-primary {
+        width: 100%;
+        background: var(--gradient);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 13px;
+        font-weight: 700;
+        font-size: 15px;
+        margin-top: 8px;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+
+    .btn-ramp-nc-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(124, 58, 237, 0.4);
+        filter: brightness(1.1);
+    }
+
+    .auth-nc-footer {
+        text-align: center;
+        margin-top: 35px;
+        font-size: 14px;
+        color: var(--text-muted);
+    }
+
+    .auth-nc-footer a {
+        color: white;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .text-danger {
+        font-size: 13px;
+        color: #EF4444;
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 768px) {
+        .nav-links {
+            display: none;
+        }
+
+        .auth-header-nc h1 {
+            font-size: 30px;
+        }
+    }
+</style>
+
+<nav class="ramp-nav">
+    <a href="{% url 'landing' %}" class="ramp-logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="#7C3AED" />
+        </svg>
+        Flock Ramp
+    </a>
+    <div class="nav-links">
+        <a href="#" class="nav-link-custom">Businesses</a>
+        <a href="#" class="nav-link-custom">Individuals</a>
+        <a href="#" class="nav-link-custom">About</a>
+        <a href="#" class="nav-link-custom">Pricing</a>
+        <a href="#" class="nav-link-custom">Pages</a>
+        <a href="{% url 'login' %}" class="btn-ramp-login">Log in</a>
+        <a href="{% url 'register' %}" class="btn-ramp-signup">Sign up</a>
+    </div>
+</nav>
+
+<div class="auth-no-card-wrapper">
+    <div class="auth-no-card-container">
+        <div class="auth-header-nc">
+            <h1>Get Started New!</h1>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group-nc">
+                <label class="form-label-nc">Enter your Name</label>
+                <input type="text" name="username" id="id_username" class="form-control-nc" placeholder="Your name"
+                    required>
+                {% if form.username.errors %}
+                <div class="text-danger mt-2">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group-nc">
+                <label class="form-label-nc">Enter your Email</label>
+                <input type="email" name="email" id="id_email" class="form-control-nc" placeholder="Your email"
+                    required>
+                {% if form.email.errors %}
+                <div class="text-danger mt-2">{{ form.email.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group-nc">
+                <label class="form-label-nc">Enter your Password</label>
+                <input type="password" name="password1" id="id_password1" class="form-control-nc"
+                    placeholder="Your password" required>
+                {% if form.password1.errors %}
+                <div class="text-danger mt-2">{{ form.password1.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group-nc">
+                <label class="form-label-nc">Password confirmation</label>
+                <input type="password" name="password2" id="id_password2" class="form-control-nc"
+                    placeholder="Your password confirmation" required>
+                {% if form.password2.errors %}
+                <div class="text-danger mt-2">{{ form.password2.errors }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn-ramp-nc-primary">Sign up</button>
+
+            <div class="auth-nc-footer">
+                Already have an account? <a href="{% url 'login' %}">Log in</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

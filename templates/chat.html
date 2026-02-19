@@ -1,0 +1,453 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Chat with {{ other_user.username }}{% endblock %}
+
+{% block content %}
+<!-- Column 2: Chats Panel (Sidebar) -->
+<div class="chats-panel d-flex-column">
+    <div class="panel-header">
+        <h2 class="title-lg">Chats</h2>
+        <div class="search-box">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="search-icon">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="sidebar-search-input" placeholder="Search conversations..." class="search-input">
+        </div>
+    </div>
+
+    <!-- Active Users (Mini Scroll) -->
+    <div class="active-users-section">
+        <div class="active-users-scroll d-flex gap-3">
+            {% for u in users %}
+            <a href="{% url 'chat_room' u.username %}"
+                class="active-user-chip {% if u == other_user %}active{% endif %}">
+                <div class="avatar-wrapper">
+                    <img src="https://ui-avatars.com/api/?name={{ u.username }}&background=random"
+                        alt="{{ u.username }}" class="avatar-md">
+                    {% if u.is_online %}
+                    <span class="status-indicator online"></span>
+                    {% endif %}
+                </div>
+                <span class="chip-name">{{ u.username|truncatechars:7 }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Recent Chats -->
+    <div class="recent-chats-list flex-1 overflow-y-auto">
+        <h3 class="section-title">Recent</h3>
+        {% for u in users %}
+        <a href="{% url 'chat_room' u.username %}" class="chat-item {% if u == other_user %}active{% endif %}">
+            <div class="avatar-wrapper">
+                <img src="https://ui-avatars.com/api/?name={{ u.username }}&background=random" alt="{{ u.username }}"
+                    class="avatar-lg">
+                {% if u.is_online %}
+                <span class="status-indicator online"></span>
+                {% endif %}
+            </div>
+            <div class="chat-info">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="user-name">{{ u.username }}</span>
+                    <span class="chat-time">
+                        {% if u.last_message %}
+                        {{ u.last_message.timestamp|date:"h:i A" }}
+                        {% endif %}
+                    </span>
+                </div>
+                <span class="last-msg text-truncate">
+                    {% if u.last_message %}
+                    {{ u.last_message.message }}
+                    {% else %}
+                    No messages yet
+                    {% endif %}
+                </span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Column 3: Main Chat Feed -->
+<div class="chat-feed-panel flex-1 d-flex-column">
+    <!-- Chat Header -->
+    <div class="chat-header">
+        <button class="mobile-back-btn" id="show-chats-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+        </button>
+        <div class="user-profile">
+            <div class="avatar-wrapper">
+                <img src="https://ui-avatars.com/api/?name={{ other_user.username }}&background=random"
+                    alt="{{ other_user.username }}" class="avatar-header">
+                {% if other_user.is_online %}
+                <span class="status-indicator online"></span>
+                {% endif %}
+            </div>
+            <div class="user-details">
+                <h4 class="header-name">{{ other_user.username }}</h4>
+                <p class="status-text" id="header-status">
+                    {% if other_user.is_online %}
+                    <span class="online-dot-text"></span> Online
+                    {% else %}
+                    Offline
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        <div class="chat-actions">
+            <div class="header-search-wrapper" id="header-search-wrapper" style="display: none;">
+                <input type="text" id="header-search-input" placeholder="Search in chat..." class="header-search-input">
+            </div>
+            <button class="action-btn" id="header-search-btn"><svg xmlns="http://www.w3.org/2000/svg" width="20"
+                    height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg></button>
+        </div>
+    </div>
+
+    <!-- Message Feed -->
+    <div class="message-feed flex-1 overflow-y-auto" id="chat-messages">
+        {% for msg in chat_messages %}
+        <div class="message-row {% if msg.sender == user %}me{% endif %}">
+            <div class="msg-avatar-col">
+                <img src="https://ui-avatars.com/api/?name={{ msg.sender.username }}&background=random"
+                    class="avatar-sm">
+            </div>
+            <div class="msg-content-col">
+                <div class="bubble-container">
+                    <div class="message-bubble">{{ msg.message }}</div>
+                    <div class="msg-meta">
+                        {{ msg.timestamp|date:"H:i" }}
+                        {% if msg.sender == user %}
+                        <span class="read-status">
+                            {% if msg.is_read %}
+                            ✓✓
+                            {% else %}
+                            ✓
+                            {% endif %}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="sender-name">{{ msg.sender.username }}</div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="chat-feed-placeholder-empty">
+            <div class="welcome-card text-center">
+                <div class="icon-circle mb-4" style="background: var(--primary-color);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </div>
+                <h2>Say hello!</h2>
+                <p>Start a conversation with {{ other_user.username }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Typing Indicator -->
+    <div id="typing-indicator" class="typing-indicator-premium"></div>
+
+    <!-- Input Area -->
+    <div class="chat-input-area">
+        <!-- Emoji Picker Popup -->
+        <div id="emoji-picker"
+            style="display:none; position:absolute; bottom:70px; left:10px; background:#1E1E24; border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:0; z-index:100; width:320px; box-shadow:0 8px 32px rgba(0,0,0,0.5); overflow:hidden;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px 6px;">
+                <span style="color:#A1A1AA; font-size:12px; font-weight:600;">Emojis</span>
+                <button id="emoji-close"
+                    style="background:none; border:none; color:#A1A1AA; cursor:pointer; font-size:16px;">✕</button>
+            </div>
+            <div id="emoji-tabs" style="display:flex; gap:2px; padding:0 10px 8px; overflow-x:auto;"></div>
+            <div id="emoji-grid"
+                style="display:grid; grid-template-columns:repeat(8,1fr); gap:2px; max-height:220px; overflow-y:auto; padding:4px 10px 10px;">
+            </div>
+        </div>
+
+        <!-- File Preview Bar -->
+        <div id="file-preview"
+            style="display:none; position:absolute; bottom:70px; left:10px; right:10px; background:#1E1E24; border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:10px 14px; z-index:99; display:none;">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+                <span id="file-preview-name"
+                    style="color:#A1A1AA; font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></span>
+                <button id="file-preview-remove"
+                    style="background:none; border:none; color:#EF4444; cursor:pointer; font-size:14px; font-weight:700;">✕</button>
+            </div>
+        </div>
+
+        <!-- Hidden file inputs -->
+        <input type="file" id="file-input" style="display:none;">
+        <input type="file" id="image-input" accept="image/*" style="display:none;">
+
+        <div class="input-actions-left">
+            <button class="util-btn" id="emoji-btn" title="Emoji"><svg xmlns="http://www.w3.org/2000/svg" width="20"
+                    height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                    <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                    <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                </svg></button>
+            <button class="util-btn" id="attach-btn" title="Attach File"><svg xmlns="http://www.w3.org/2000/svg"
+                    width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.51a2 2 0 0 1-2.83-2.83l8.49-8.48">
+                    </path>
+                </svg></button>
+            <button class="util-btn" id="image-btn" title="Send Image"><svg xmlns="http://www.w3.org/2000/svg"
+                    width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                </svg></button>
+        </div>
+        <input type="text" id="chat-message-input" placeholder="Enter Message..." class="message-input-field">
+        <button id="chat-message-submit" class="send-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+        </button>
+    </div>
+</div>
+
+{{ user.username|json_script:"user_username" }}
+{{ other_user.username|json_script:"other_user_username" }}
+
+<script>
+    const userUsername = JSON.parse(document.getElementById('user_username').textContent);
+    const otherUserUsername = JSON.parse(document.getElementById('other_user_username').textContent);
+
+    const chatSocket = new WebSocket(
+        (window.location.protocol === 'https:' ? 'wss://' : 'ws://') +
+        window.location.host + '/ws/chat/' + otherUserUsername + '/'
+    );
+
+    const messageContainer = document.getElementById('chat-messages');
+    const messageInput = document.getElementById('chat-message-input');
+    const messageSubmit = document.getElementById('chat-message-submit');
+    const typingIndicator = document.getElementById('typing-indicator');
+
+    const scrollToBottom = () => { messageContainer.scrollTop = messageContainer.scrollHeight; };
+    scrollToBottom();
+
+    chatSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        if (data.type === 'chat_message') {
+            const isMe = data.sender === userUsername;
+            const msgHtml = `
+                <div class="message-row ${isMe ? 'me' : ''}">
+                    <div class="msg-avatar-col">
+                        <img src="https://ui-avatars.com/api/?name=${data.sender}&background=random" class="avatar-sm">
+                    </div>
+                    <div class="msg-content-col">
+                        <div class="bubble-container">
+                            <div class="message-bubble">${data.message}</div>
+                            <div class="msg-meta">
+                                ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                ${isMe ? '<span class="read-status">✓</span>' : ''}
+                            </div>
+                        </div>
+                        <div class="sender-name">${data.sender}</div>
+                    </div>
+                </div>
+            `;
+            messageContainer.insertAdjacentHTML('beforeend', msgHtml);
+            scrollToBottom();
+        } else if (data.type === 'typing') {
+            if (data.sender !== userUsername) {
+                typingIndicator.innerHTML = data.is_typing ? `<div class="typing-bubble">typing<span>.</span><span>.</span><span>.</span></div>` : '';
+                scrollToBottom();
+            }
+        }
+    };
+
+    messageInput.focus();
+    messageInput.onkeyup = function (e) {
+        if (e.keyCode === 13) messageSubmit.click();
+        chatSocket.send(JSON.stringify({ 'type': 'typing', 'is_typing': messageInput.value.length > 0 }));
+    };
+
+    messageSubmit.onclick = function (e) {
+        const message = messageInput.value.trim();
+        if (message) {
+            chatSocket.send(JSON.stringify({ 'type': 'chat_message', 'message': message }));
+            messageInput.value = '';
+            chatSocket.send(JSON.stringify({ 'type': 'typing', 'is_typing': false }));
+        }
+    };
+
+    // Sidebar Search Logic
+    const sidebarSearch = document.getElementById('sidebar-search-input');
+    sidebarSearch.oninput = function () {
+        const query = sidebarSearch.value.toLowerCase();
+        document.querySelectorAll('.chat-item').forEach(item => {
+            const name = item.querySelector('.user-name').textContent.toLowerCase();
+            item.style.display = name.includes(query) ? '' : 'none';
+        });
+    };
+
+    // Header Search Logic
+    const headerSearchBtn = document.getElementById('header-search-btn');
+    const headerSearchWrapper = document.getElementById('header-search-wrapper');
+    const headerSearchInput = document.getElementById('header-search-input');
+
+    headerSearchBtn.onclick = function () {
+        if (headerSearchWrapper.style.display === 'none') {
+            headerSearchWrapper.style.display = 'block';
+            headerSearchInput.focus();
+        } else {
+            headerSearchWrapper.style.display = 'none';
+            headerSearchInput.value = '';
+            // Reset message visibility
+            document.querySelectorAll('.message-row').forEach(row => row.style.display = '');
+        }
+    };
+
+    headerSearchInput.oninput = function () {
+        const query = headerSearchInput.value.toLowerCase();
+        document.querySelectorAll('.message-row').forEach(row => {
+            const msg = row.querySelector('.message-bubble').textContent.toLowerCase();
+            row.style.display = msg.includes(query) ? '' : 'none';
+        });
+    };
+
+    // Mobile Toggle Logic
+    const showChatsBtn = document.getElementById('show-chats-btn');
+    const chatsPanel = document.querySelector('.chats-panel');
+    const feedPanel = document.querySelector('.chat-feed-panel');
+
+    if (showChatsBtn) {
+        showChatsBtn.onclick = function () {
+            chatsPanel.classList.add('mobile-active');
+            feedPanel.classList.remove('mobile-active');
+        };
+    }
+
+    // When clicking a chat item on mobile, show the feed
+    document.querySelectorAll('.chat-item').forEach(item => {
+        item.addEventListener('click', function () {
+            if (window.innerWidth <= 768) {
+                chatsPanel.classList.remove('mobile-active');
+                feedPanel.classList.add('mobile-active');
+            }
+        });
+    });
+
+    // Default state for mobile: show feed if we have an active chat, otherwise list
+    if (window.innerWidth <= 768) {
+        if (otherUserUsername && otherUserUsername !== "") {
+            chatsPanel.classList.remove('mobile-active');
+            feedPanel.classList.add('mobile-active');
+        } else {
+            chatsPanel.classList.add('mobile-active');
+            feedPanel.classList.remove('mobile-active');
+        }
+    }
+
+    // ===== EMOJI PICKER =====
+    const emojiCategories = {
+        '😀': ['😀', '😃', '😄', '😁', '😆', '😅', '🤣', '😂', '🙂', '😊', '😇', '🥰', '😍', '🤩', '😘', '😗', '😚', '😙', '🥲', '😋', '😛', '😜', '🤪', '😝', '🤑', '🤗', '🤭', '🤫', '🤔', '🫡', '🤐', '🤨', '😐', '😑', '😶', '🫥', '😏', '😒', '🙄', '😬', '🤥', '😌', '😔', '😪', '🤤', '😴', '😷', '🤒', '🤕', '🤢', '🤮', '🥵', '🥶', '🥴', '😵', '🤯', '😎', '🥸', '🤓', '😕', '🫤', '😟', '🙁', '😮', '😯', '😲', '😳', '🥺', '🥹', '😦', '😧', '😨', '😰', '😥', '😢', '😭', '😱', '😖', '😣', '😞', '😓', '😩', '😫', '🥱', '😤', '😡', '😠', '🤬', '💀', '☠️', '💩', '🤡', '👻', '👽', '🫠'],
+        '👋': ['👋', '🤚', '🖐️', '✋', '🖖', '🫱', '🫲', '🫳', '🫴', '👌', '🤌', '🤏', '✌️', '🤞', '🫰', '🤟', '🤘', '🤙', '👈', '👉', '👆', '🖕', '👇', '☝️', '🫵', '👍', '👎', '✊', '👊', '🤛', '🤜', '👏', '🙌', '🫶', '👐', '🤲', '🤝', '🙏', '💪', '🦾', '🦿', '🦵', '🦶', '👀', '👁️', '👅', '👄'],
+        '❤️': ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔', '❤️‍🔥', '❤️‍🩹', '❣️', '💕', '💞', '💓', '💗', '💖', '💘', '💝', '💟', '♥️', '💋', '💌', '💐', '🌹', '🥀', '🫀'],
+        '🐶': ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐻‍❄️', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐵', '🙈', '🙉', '🙊', '🐔', '🐧', '🐦', '🐤', '🦆', '🦅', '🦉', '🦇', '🐺', '🐗', '🐴', '🦄', '🐝', '🪱', '🐛', '🦋', '🐌', '🐞', '🐜', '🪰', '🪲', '🐢', '🐍', '🦎', '🦂', '🦀', '🐙', '🦑', '🐠', '🐟', '🐡', '🐬', '🦈', '🐳', '🐋', '🦭'],
+        '🍕': ['🍏', '🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🥦', '🥬', '🥒', '🌶️', '🫑', '🌽', '🥕', '🫒', '🧄', '🧅', '🥔', '🍠', '🫘', '🥐', '🍞', '🥖', '🥨', '🧀', '🥚', '🍳', '🧈', '🥞', '🧇', '🥓', '🥩', '🍗', '🍖', '🌭', '🍔', '🍟', '🍕', '🫓', '🥪', '🌮', '🌯', '🫔', '🥙', '🧆', '🥚', '🍝', '🍜', '🍲', '🍛', '🍣', '🍱', '🥟', '🦪', '🍤', '🍙', '🍚', '🍘', '🍥', '🥠', '🥮', '🍢', '🍡', '🍧', '🍨', '🍦', '🥧', '🧁', '🍰', '🎂', '🍮', '🍭', '🍬', '🍫', '🍿', '🍩', '🍪', '🌰', '🥜', '☕', '🍵', '🫖', '🥛', '🍼', '🫗', '🍶', '🍺', '🍻', '🥂', '🍷', '🫧'],
+        '⚽': ['⚽', '🏀', '🏈', '⚾', '🥎', '🎾', '🏐', '🏉', '🥏', '🎱', '🏓', '🏸', '🏒', '🥅', '⛳', '🏹', '🎣', '🤿', '🥊', '🥋', '🎽', '🛹', '🛼', '🛷', '⛸️', '🥌', '🎿', '🎪', '🎭', '🎨', '🎬', '🎤', '🎧', '🎼', '🎹', '🥁', '🪘', '🎷', '🎺', '🪗', '🎸', '🎻', '🎲', '♟️', '🎯', '🎳', '🎮', '🕹️', '🧩'],
+        '💡': ['💡', '🔦', '🏮', '🪔', '📱', '💻', '⌨️', '🖥️', '🖨️', '🖱️', '💾', '💿', '📀', '📷', '📸', '📹', '🎥', '📽️', '📺', '📻', '🎙️', '🎚️', '🎛️', '⏱️', '⏲️', '⏰', '🕰️', '📡', '🔋', '🔌', '💰', '💵', '💴', '💶', '💷', '🪙', '💎', '⚖️', '🔧', '🔨', '🪛', '🔩', '⚙️', '🔗', '📎', '🖇️', '📌', '📍', '✂️', '📝', '✏️', '🔍', '🔎', '🔐', '🔒', '🔓', '🏆', '🥇', '🥈', '🥉', '🏅', '🎖️', '🎗️', '🎁', '🎀', '🎊', '🎉', '🎈', '✨', '🌟', '💫', '⭐', '🌈', '☀️', '🌤️', '⛅', '🌥️', '🌦️', '🌧️', '⛈️', '🌩️', '❄️', '☃️', '🔥', '💧', '🌊', '✅', '❌', '❓', '❗', '💬', '🚀']
+    };
+    const tabIcons = { '😀': '😀', '👋': '👋', '❤️': '❤️', '🐶': '🐶', '🍕': '🍕', '⚽': '⚽', '💡': '💡' };
+    const tabNames = { '😀': 'Smileys', '👋': 'Gestures', '❤️': 'Hearts', '🐶': 'Animals', '🍕': 'Food', '⚽': 'Activities', '💡': 'Objects' };
+
+    const emojiPicker = document.getElementById('emoji-picker');
+    const emojiGrid = document.getElementById('emoji-grid');
+    const emojiTabs = document.getElementById('emoji-tabs');
+    const emojiBtn = document.getElementById('emoji-btn');
+    const emojiClose = document.getElementById('emoji-close');
+    let activeTab = null;
+
+    function renderEmojiTab(key) {
+        emojiGrid.innerHTML = '';
+        activeTab = key;
+        document.querySelectorAll('.emoji-tab-btn').forEach(t => {
+            t.style.background = t.dataset.key === key ? 'rgba(124,58,237,0.3)' : 'none';
+        });
+        emojiCategories[key].forEach(emoji => {
+            const btn = document.createElement('button');
+            btn.textContent = emoji;
+            btn.style.cssText = 'font-size:20px; background:none; border:none; cursor:pointer; padding:4px; border-radius:8px; transition:background 0.15s; line-height:1;';
+            btn.onmouseenter = () => btn.style.background = 'rgba(255,255,255,0.1)';
+            btn.onmouseleave = () => btn.style.background = 'none';
+            btn.onclick = () => { messageInput.value += emoji; messageInput.focus(); };
+            emojiGrid.appendChild(btn);
+        });
+    }
+
+    // Build tabs
+    Object.keys(emojiCategories).forEach((key, i) => {
+        const tab = document.createElement('button');
+        tab.className = 'emoji-tab-btn';
+        tab.dataset.key = key;
+        tab.textContent = tabIcons[key];
+        tab.title = tabNames[key];
+        tab.style.cssText = 'font-size:18px; background:none; border:none; cursor:pointer; padding:5px 8px; border-radius:8px; transition:background 0.15s; flex-shrink:0;';
+        tab.onclick = () => renderEmojiTab(key);
+        emojiTabs.appendChild(tab);
+    });
+    renderEmojiTab('😀');
+
+    emojiBtn.onclick = () => { emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none'; };
+    emojiClose.onclick = () => { emojiPicker.style.display = 'none'; };
+    document.addEventListener('click', (e) => {
+        if (!emojiPicker.contains(e.target) && e.target !== emojiBtn && !emojiBtn.contains(e.target)) {
+            emojiPicker.style.display = 'none';
+        }
+    });
+
+    // ===== FILE ATTACHMENT =====
+    const attachBtn = document.getElementById('attach-btn');
+    const fileInput = document.getElementById('file-input');
+    const filePreview = document.getElementById('file-preview');
+    const filePreviewName = document.getElementById('file-preview-name');
+    const filePreviewRemove = document.getElementById('file-preview-remove');
+
+    attachBtn.onclick = () => { fileInput.click(); };
+    fileInput.onchange = () => {
+        if (fileInput.files.length > 0) {
+            const f = fileInput.files[0];
+            filePreviewName.textContent = '📎 ' + f.name + ' (' + (f.size / 1024).toFixed(1) + ' KB)';
+            filePreview.style.display = 'block';
+        }
+    };
+    filePreviewRemove.onclick = () => { fileInput.value = ''; imageInput.value = ''; filePreview.style.display = 'none'; };
+
+    // ===== IMAGE UPLOAD =====
+    const imageBtn = document.getElementById('image-btn');
+    const imageInput = document.getElementById('image-input');
+
+    imageBtn.onclick = () => { imageInput.click(); };
+    imageInput.onchange = () => {
+        if (imageInput.files.length > 0) {
+            const f = imageInput.files[0];
+            filePreviewName.textContent = '🖼️ ' + f.name + ' (' + (f.size / 1024).toFixed(1) + ' KB)';
+            filePreview.style.display = 'block';
+        }
+    };
+
+</script>
+{% endblock %}

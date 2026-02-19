@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile | Flock Ramp{% endblock %}
+
+{% block content %}
+<style>
+    /* ---------- EDIT PROFILE CONTAINER ---------- */
+    .profile-panel {
+        background-color: var(--bg-dark);
+        padding: 100px 20px 60px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+    }
+
+    .profile-card-nc {
+        width: 100%;
+        max-width: 500px;
+        background: rgba(24, 24, 27, 0.4);
+        padding: 45px 35px;
+        border-radius: 32px;
+        border: 1px solid var(--border-color);
+        backdrop-filter: blur(10px);
+        animation: fadeUp 0.8s ease;
+    }
+
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ---------- HEADER ---------- */
+    .edit-header-nc {
+        text-align: left;
+        margin-bottom: 30px;
+    }
+
+    .edit-header-nc h1 {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: white;
+    }
+
+    .edit-header-nc p {
+        color: var(--text-muted);
+        font-size: 15px;
+    }
+
+    /* ---------- FORM STYLES ---------- */
+    .form-label-nc {
+        font-weight: 500;
+        font-size: 13px;
+        color: white;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .form-control-nc {
+        width: 100%;
+        padding: 14px 16px;
+        border-radius: 12px;
+        border: 1px solid var(--field-border);
+        background: var(--field-bg);
+        color: white;
+        transition: all 0.2s;
+        font-size: 14px;
+    }
+
+    .form-control-nc:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        background: #18181B;
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+    }
+
+    /* ---------- ACTIONS ---------- */
+    .edit-actions-nc {
+        margin-top: 35px;
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn-ramp-nc-primary {
+        flex: 1;
+        background: var(--premium-gradient);
+        color: white;
+        border: none;
+        padding: 14px;
+        border-radius: 14px;
+        font-weight: 700;
+        transition: all 0.3s;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    .btn-ramp-nc-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(124, 58, 237, 0.4);
+        filter: brightness(1.1);
+    }
+
+    .btn-ramp-nc-outline {
+        color: white;
+        border: 1px solid var(--border-color);
+        padding: 14px 25px;
+        border-radius: 14px;
+        font-weight: 600;
+        transition: all 0.2s;
+        text-decoration: none;
+        background: rgba(255, 255, 255, 0.05);
+        font-size: 15px;
+        text-align: center;
+    }
+
+    .btn-ramp-nc-outline:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: white;
+    }
+
+    .required-nc {
+        color: #EF4444;
+    }
+
+    .text-danger {
+        color: #EF4444;
+        font-size: 13px;
+    }
+
+    .help-text-nc {
+        color: var(--text-muted);
+        font-size: 12px;
+        margin-top: 6px;
+    }
+</style>
+
+<div class="profile-panel">
+    <div class="profile-card-nc">
+        <div class="edit-header-nc">
+            <h1>Edit Profile</h1>
+            <p>Update your personal information below.</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div class="mb-4">
+                <label for="{{ field.id_for_label }}" class="form-label-nc">
+                    {{ field.label }} {% if field.field.required %}<span class="required-nc">*</span>{% endif %}
+                </label>
+                {{ field }}
+                {% if field.errors %}
+                <div class="text-danger mt-1">
+                    {{ field.errors }}
+                </div>
+                {% endif %}
+                {% if field.help_text %}
+                <div class="help-text-nc">
+                    {{ field.help_text|safe }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div class="edit-actions-nc">
+                <a href="{% url 'profile' %}" class="btn-ramp-nc-outline">Cancel</a>
+                <button type="submit" class="btn-ramp-nc-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

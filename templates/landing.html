@@ -1,0 +1,248 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flock Ramp | Connect Seamlessly</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #09090B;
+            --text-main: #FFFFFF;
+            --text-muted: #A1A1AA;
+            --accent: #7C3AED;
+            --gradient: linear-gradient(90deg, #7C3AED 0%, #4F46E5 100%);
+            --glass-bg: rgba(24, 24, 27, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ---------- NAVBAR ---------- */
+        .ramp-nav {
+            padding: 25px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(9, 9, 11, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .ramp-logo {
+            font-size: 24px;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ramp-logo span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link-custom {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-link-custom:hover {
+            color: white;
+        }
+
+        .btn-ramp-login {
+            color: white;
+            padding: 8px 25px;
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-ramp-login:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-ramp-signup {
+            background: white;
+            color: black;
+            padding: 8px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-ramp-signup:hover {
+            background: #E4E4E7;
+            transform: scale(1.05);
+        }
+
+        /* ---------- HERO ---------- */
+        .ramp-hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 10%;
+            position: relative;
+            background: radial-gradient(circle at 50% -20%, #1e1b4b 0%, #09090b 70%);
+        }
+
+        .hero-badge {
+            background: rgba(124, 58, 237, 0.1);
+            color: var(--accent);
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            display: inline-block;
+        }
+
+        .ramp-hero h1 {
+            font-size: 72px;
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin-bottom: 25px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #A1A1AA 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .ramp-hero p {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 45px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn-hero-primary {
+            background: var(--gradient);
+            color: white;
+            padding: 16px 45px;
+            border-radius: 14px;
+            font-weight: 700;
+            text-decoration: none;
+            font-size: 16px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+            transition: all 0.3s;
+        }
+
+        .btn-hero-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.4);
+        }
+
+        /* ---------- ANIMATIONS ---------- */
+        .fade-up {
+            animation: fadeUp 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .ramp-hero h1 {
+                font-size: 48px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="ramp-nav">
+        <a href="/" class="ramp-logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                style="margin-top: -4px;">
+                <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="currentColor" />
+            </svg>
+            Flock Ramp
+        </a>
+
+        <div class="nav-links">
+            <a href="#" class="nav-link-custom">Businesses</a>
+            <a href="#" class="nav-link-custom">Individuals</a>
+            <a href="#" class="nav-link-custom">Pricing</a>
+            <div class="d-flex gap-3 ms-4">
+                <a href="{% url 'login' %}" class="btn-ramp-login">Log in</a>
+                <a href="{% url 'register' %}" class="btn-ramp-signup">Sign up</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="ramp-hero">
+        <div class="fade-up">
+            <div class="hero-badge">Secure Messaging Reborn</div>
+            <h1>The New Benchmark<br>of Real-Time Chat</h1>
+            <p>Connect with teams and friends using a platform designed for the highest standard of security, speed, and
+                premium user experience.</p>
+            <div class="hero-actions justify-content-center">
+                <a href="{% url 'register' %}" class="btn-hero-primary">Get Started New</a>
+            </div>
+        </div>
+    </main>
+
+</body>
+
+</html>

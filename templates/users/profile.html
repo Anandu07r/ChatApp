@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ user.username }}'s Profile | Flock Ramp{% endblock %}
+
+{% block content %}
+<style>
+    /* ---------- PROFILE CONTAINER ---------- */
+    .profile-panel {
+        background-color: var(--bg-dark);
+        padding: 40px 20px 30px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .profile-card-nc {
+        width: 100%;
+        max-width: 600px;
+        background: rgba(24, 24, 27, 0.4);
+        padding: 35px 40px;
+        border-radius: 24px;
+        border: 1px solid var(--border-color);
+        backdrop-filter: blur(10px);
+        animation: fadeUp 0.8s ease;
+    }
+
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ---------- HEADER ---------- */
+    .profile-header-nc {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .profile-avatar-nc {
+        width: 80px;
+        height: 80px;
+        border-radius: 24px;
+        margin-bottom: 14px;
+        border: 3px solid var(--field-border);
+        object-fit: cover;
+    }
+
+    .profile-header-nc h1 {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 6px;
+        color: white;
+    }
+
+    .profile-header-nc p {
+        color: var(--text-muted);
+        font-size: 16px;
+    }
+
+    /* ---------- INFO GRID ---------- */
+    .info-section-nc {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 16px;
+        padding: 20px 24px;
+        border: 1px solid var(--border-color);
+    }
+
+    .info-item-nc {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+    }
+
+    .info-item-nc:not(:last-child) {
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .info-label-nc {
+        color: var(--text-muted);
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .info-value-nc {
+        color: white;
+        font-weight: 600;
+        font-size: 15px;
+    }
+
+    /* ---------- BUTTONS ---------- */
+    .profile-actions-nc {
+        margin-top: 25px;
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn-ramp-nc-primary {
+        flex: 1;
+        background: var(--premium-gradient);
+        color: white;
+        border: none;
+        padding: 14px;
+        border-radius: 14px;
+        font-weight: 700;
+        transition: all 0.3s;
+        text-decoration: none;
+        text-align: center;
+        font-size: 15px;
+    }
+
+    .btn-ramp-nc-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(124, 58, 237, 0.4);
+        filter: brightness(1.1);
+    }
+
+    .btn-ramp-nc-outline {
+        color: white;
+        border: 1px solid var(--border-color);
+        padding: 14px 25px;
+        border-radius: 14px;
+        font-weight: 600;
+        transition: all 0.2s;
+        text-decoration: none;
+        background: rgba(255, 255, 255, 0.05);
+        font-size: 15px;
+    }
+
+    .btn-ramp-nc-outline:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: white;
+    }
+
+    @media (max-width: 600px) {
+        .profile-card-nc {
+            padding: 30px 20px;
+        }
+
+        .profile-actions-nc {
+            flex-direction: column-reverse;
+        }
+    }
+</style>
+
+<div class="profile-panel d-flex flex-1">
+    <div class="profile-card-nc">
+        <div class="profile-header-nc">
+            <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=7C3AED&color=fff&size=200"
+                alt="{{ user.username }}" class="profile-avatar-nc">
+            <h1>Account Settings</h1>
+            <p>Manage your profile and preferences</p>
+        </div>
+
+        <div class="info-section-nc">
+            <div class="info-item-nc">
+                <span class="info-label-nc">Username</span>
+                <span class="info-value-nc">@{{ user.username }}</span>
+            </div>
+            <div class="info-item-nc">
+                <span class="info-label-nc">Email Address</span>
+                <span class="info-value-nc">{{ user.email }}</span>
+            </div>
+            <div class="info-item-nc">
+                <span class="info-label-nc">Member Since</span>
+                <span class="info-value-nc">{{ user.date_joined|date:"F Y" }}</span>
+            </div>
+            <div class="info-item-nc">
+                <span class="info-label-nc">Last Login</span>
+                <span class="info-value-nc">{{ user.last_login|date:"D, d M H:i" }}</span>
+            </div>
+        </div>
+
+        <div class="profile-actions-nc">
+            <a href="{% url 'user_list' %}" class="btn-ramp-nc-outline">Back to Chat</a>
+            <a href="{% url 'edit_profile' %}" class="btn-ramp-nc-primary">Edit Profile</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
