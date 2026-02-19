@@ -109,7 +109,7 @@ def password_reset_confirm_view(request):
             del request.session['reset_email']
             del request.session['otp_verified']
             messages.success(request, "Your password has been reset successfully. You can now log in.")
-            return redirect('password_reset_complete')
+            return redirect('login')
     else:
         form = CustomSetPasswordForm(user)
     return render(request, 'registration/password_reset_confirm.html', {'form': form})
