@@ -16,8 +16,8 @@ def register_view(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
-            return redirect('user_list')
+            messages.success(request, "Successfully registered! Please log in.")
+            return redirect('login')
     else:
         form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})

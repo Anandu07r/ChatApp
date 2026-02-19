@@ -256,7 +256,7 @@
             <div class="form-group-nc">
                 <label class="form-label-nc">Enter your Email</label>
                 <input type="text" name="username" id="id_username" class="form-control-nc" placeholder="Your email"
-                    required>
+                    value="{{ form.username.value|default:'' }}" autocomplete="email" required>
                 {% if form.username.errors %}
                 <div class="text-danger small mt-2">{{ form.username.errors }}</div>
                 {% endif %}
@@ -265,7 +265,7 @@
             <div class="form-group-nc">
                 <label class="form-label-nc">Enter your Password</label>
                 <input type="password" name="password" id="id_password" class="form-control-nc"
-                    placeholder="Your password" required>
+                    placeholder="Your password" autocomplete="current-password" required>
                 <a href="{% url 'password_reset' %}" class="forgot-link-nc">Forgot password?</a>
                 {% if form.password.errors %}
                 <div class="text-danger small mt-2">{{ form.password.errors }}</div>

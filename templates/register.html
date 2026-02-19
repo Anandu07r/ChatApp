@@ -235,7 +235,7 @@
             <div class="form-group-nc">
                 <label class="form-label-nc">Enter your Name</label>
                 <input type="text" name="username" id="id_username" class="form-control-nc" placeholder="Your name"
-                    required>
+                    value="{{ form.username.value|default:'' }}" autocomplete="username" required>
                 {% if form.username.errors %}
                 <div class="text-danger mt-2">{{ form.username.errors }}</div>
                 {% endif %}
@@ -244,7 +244,7 @@
             <div class="form-group-nc">
                 <label class="form-label-nc">Enter your Email</label>
                 <input type="email" name="email" id="id_email" class="form-control-nc" placeholder="Your email"
-                    required>
+                    value="{{ form.email.value|default:'' }}" autocomplete="email" required>
                 {% if form.email.errors %}
                 <div class="text-danger mt-2">{{ form.email.errors }}</div>
                 {% endif %}
@@ -253,7 +253,7 @@
             <div class="form-group-nc">
                 <label class="form-label-nc">Enter your Password</label>
                 <input type="password" name="password1" id="id_password1" class="form-control-nc"
-                    placeholder="Your password" required>
+                    placeholder="Your password" autocomplete="new-password" required>
                 {% if form.password1.errors %}
                 <div class="text-danger mt-2">{{ form.password1.errors }}</div>
                 {% endif %}
@@ -262,7 +262,7 @@
             <div class="form-group-nc">
                 <label class="form-label-nc">Password confirmation</label>
                 <input type="password" name="password2" id="id_password2" class="form-control-nc"
-                    placeholder="Your password confirmation" required>
+                    placeholder="Your password confirmation" autocomplete="new-password" required>
                 {% if form.password2.errors %}
                 <div class="text-danger mt-2">{{ form.password2.errors }}</div>
                 {% endif %}
