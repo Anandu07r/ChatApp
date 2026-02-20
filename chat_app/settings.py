@@ -128,24 +128,20 @@ STATICFILES_DIRS = [BASE_DIR / "static"] if (BASE_DIR / "static").exists() else 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
-
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-
 
 
 
 AUTH_USER_MODEL = "users.CustomUser"
 
-
-
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",  
+]
 
 
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "user_list"
 LOGOUT_REDIRECT_URL = "login"
-
 
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
