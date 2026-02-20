@@ -1,22 +1,17 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.utils import timezone
 import datetime
 import random
+from django.utils import timezone
 
 
 class CustomUser(AbstractUser):
-    username = None
-
     email = models.EmailField(unique=True)
     is_online = models.BooleanField(default=False)
     last_seen = models.DateTimeField(auto_now=True)
 
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
-
     def __str__(self):
-        return self.email
+        return self.username
 
 
 class PasswordResetCode(models.Model):
@@ -41,4 +36,4 @@ class PasswordResetCode(models.Model):
         return str(random.SystemRandom().randint(100000, 999999))
 
     def __str__(self):
-        return f"{self.user.email} - {self.code}"
+        return f"{self.user.username} - {self.code}"

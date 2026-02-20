@@ -1,21 +1,13 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, SetPasswordForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 from django.core.exceptions import ValidationError
 from .models import CustomUser
 
 
 class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(
-        required=True,
-        widget=forms.EmailInput(attrs={
-            "class": "form-control-custom",
-            "placeholder": "Enter your email"
-        })
-    )
-
     class Meta:
         model = CustomUser
-        fields = ("email",)
+        fields = ("username", "email")
 
     def clean_email(self):
         email = self.cleaned_data["email"].lower()
@@ -27,23 +19,6 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 
-class EmailLoginForm(AuthenticationForm):
-    username = forms.EmailField(
-        label="Email",
-        widget=forms.EmailInput(attrs={
-            "class": "form-control-custom",
-            "placeholder": "Enter your email"
-        })
-    )
-
-    password = forms.CharField(
-        widget=forms.PasswordInput(attrs={
-            "class": "form-control-custom",
-            "placeholder": "Enter your password"
-        })
-    )
-
-
 class OTPRequestForm(forms.Form):
     email = forms.EmailField(
         label="Email",
@@ -52,8 +27,6 @@ class OTPRequestForm(forms.Form):
             "placeholder": "your@email.com"
         })
     )
-
-
 
 class OTPVerifyForm(forms.Form):
     code = forms.CharField(
@@ -74,6 +47,8 @@ class OTPVerifyForm(forms.Form):
 
         return code
 
+
+
 class CustomSetPasswordForm(SetPasswordForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -86,15 +61,15 @@ class CustomSetPasswordForm(SetPasswordForm):
 
 
 class UserEditForm(forms.ModelForm):
-    email = forms.EmailField(
-        widget=forms.EmailInput(attrs={
-            "class": "form-control-custom"
-        })
-    )
-
     class Meta:
         model = CustomUser
-        fields = ("email",)
+        fields = ("username", "email")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in self.fields.values():
+            field.widget.attrs["class"] = "form-control-custom"
 
     def clean_email(self):
         email = self.cleaned_data["email"].lower()
