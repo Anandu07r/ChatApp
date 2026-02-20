@@ -1,20 +1,21 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout, update_session_auth_hash
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
-from django.utils import timezone
 
 from .models import CustomUser, PasswordResetCode
 from .forms import (
     CustomUserCreationForm,
+    EmailLoginForm,       
     OTPRequestForm,
     OTPVerifyForm,
     CustomSetPasswordForm,
     UserEditForm,
 )
+
+
 
 def register_view(request):
     if request.user.is_authenticated:
@@ -29,32 +30,42 @@ def register_view(request):
 
     return render(request, "register.html", {"form": form})
 
+
+
 def login_view(request):
     if request.user.is_authenticated:
         return redirect("user_list")
 
-    form = AuthenticationForm(request, data=request.POST or None)
+    form = EmailLoginForm(request, data=request.POST or None)
 
     if form.is_valid():
-        login(request, form.get_user())
+        user = form.get_user()
+
+        # mark online
+        user.is_online = True
+        user.save(update_fields=["is_online"])
+
+        login(request, user)
         return redirect("user_list")
 
     return render(request, "login.html", {"form": form})
 
 
-
 def logout_view(request):
+    if request.user.is_authenticated:
+        request.user.is_online = False
+        request.user.save(update_fields=["is_online"])
+
     logout(request)
     messages.info(request, "You have been logged out.")
     return redirect("login")
-
 
 
 def password_reset_otp_view(request):
     form = OTPRequestForm(request.POST or None)
 
     if form.is_valid():
-        email = form.cleaned_data["email"]
+        email = form.cleaned_data["email"].lower()
 
         try:
             user = CustomUser.objects.get(email=email)
@@ -62,7 +73,6 @@ def password_reset_otp_view(request):
             messages.error(request, "No account found with that email.")
             return redirect("password_reset")
 
-        # generate code
         code = PasswordResetCode.generate_code()
 
         PasswordResetCode.objects.create(
@@ -70,12 +80,12 @@ def password_reset_otp_view(request):
             code=code
         )
 
-        # send email
         send_mail(
             subject="Password Reset Code",
             message=f"Your password reset code is {code}. It expires in 10 minutes.",
-            from_email=settings.EMAIL_HOST_USER,
+            from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[email],
+            fail_silently=False,
         )
 
         request.session["reset_email"] = email
@@ -83,6 +93,7 @@ def password_reset_otp_view(request):
         return redirect("password_reset_verify")
 
     return render(request, "registration/password_reset_form.html", {"form": form})
+
 
 
 def password_reset_verify_view(request):
@@ -97,11 +108,8 @@ def password_reset_verify_view(request):
         code = form.cleaned_data["code"]
 
         record = (
-            PasswordResetCode.objects.filter(
-                user__email=email,
-                code=code,
-                is_used=False,
-            )
+            PasswordResetCode.objects
+            .filter(user__email=email, code=code, is_used=False)
             .order_by("-created_at")
             .first()
         )
@@ -122,7 +130,6 @@ def password_reset_verify_view(request):
     )
 
 
-
 def password_reset_confirm_view(request):
     email = request.session.get("reset_email")
     verified = request.session.get("otp_verified")
@@ -140,7 +147,6 @@ def password_reset_confirm_view(request):
     if form.is_valid():
         form.save()
 
-        # clear session safely
         request.session.pop("reset_email", None)
         request.session.pop("otp_verified", None)
 
@@ -158,7 +164,6 @@ def password_reset_confirm_view(request):
 @login_required
 def profile_view(request):
     return render(request, "users/profile.html", {"user": request.user})
-
 
 
 @login_required
