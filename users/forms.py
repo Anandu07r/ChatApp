@@ -3,9 +3,9 @@ from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 from .models import CustomUser
 
 class CustomUserCreationForm(UserCreationForm):
-    class Meta(UserCreationForm.Meta):
+    class Meta:
         model = CustomUser
-        fields = ('username', 'email')
+        fields = ('email',)
 
 class OTPRequestForm(forms.Form):
     email = forms.EmailField(label="Email", widget=forms.EmailInput(attrs={'class': 'form-control-custom', 'placeholder': 'your@email.com'}))
@@ -23,8 +23,8 @@ class CustomSetPasswordForm(SetPasswordForm):
 class UserEditForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ('username', 'email')
-    
+        fields = ('email',)   
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
