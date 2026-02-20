@@ -500,7 +500,7 @@ body {
 }
 
 .chat-feed-placeholder {
-    background-color: var(--bg-dark);
+    background-color: #F5F5F7;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -509,16 +509,16 @@ body {
 }
 
 .welcome-card h2 {
-    color: white;
+    color: #1A1A1A;
 }
 
 .welcome-card p {
-    color: var(--text-muted);
+    color: #666666;
 }
 
 /* Chat Feed Panel */
 .chat-feed-panel {
-    background-color: var(--bg-dark);
+    background-color: #F5F5F7;
 }
 
 .chat-header {
@@ -527,8 +527,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--border-color);
-    background: rgba(9, 9, 11, 0.8);
+    border-bottom: 1px solid #E5E5E5;
+    background: #FFFFFF;
     backdrop-filter: blur(10px);
 }
 
@@ -613,6 +613,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 30px;
+    background-color: #F5F5F7;
 }
 
 .message-row {
@@ -735,11 +736,11 @@ body {
 /* Chat Input Area */
 .chat-input-area {
     padding: 20px 30px;
-    background-color: rgba(9, 9, 11, 0.95);
+    background-color: #FFFFFF;
     display: flex;
     align-items: center;
     gap: 15px;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid #E5E5E5;
     backdrop-filter: blur(12px);
 }
 
@@ -764,19 +765,19 @@ body {
 
 .message-input-field {
     flex: 1;
-    background-color: var(--field-bg);
-    border: 1px solid var(--field-border);
+    background-color: #F5F5F7;
+    border: 1px solid #E5E5E5;
     border-radius: 12px;
     padding: 14px 20px;
     font-size: 15px;
-    color: white;
+    color: #333333;
     outline: none;
     transition: all 0.2s;
 }
 
 .message-input-field:focus {
     border-color: var(--primary-color);
-    background-color: #18181B;
+    background-color: #FFFFFF;
 }
 
 .send-btn {

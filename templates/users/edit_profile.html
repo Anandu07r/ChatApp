@@ -90,6 +90,23 @@
     .profile-card-nc textarea,
     .profile-card-nc select {
         color: #E5E7EB;
+        background-color: var(--field-bg) !important;
+        border: 1px solid var(--field-border) !important;
+        padding: 14px 16px !important;
+        border-radius: 12px !important;
+        font-size: 14px !important;
+        transition: all 0.2s !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .profile-card-nc input:focus,
+    .profile-card-nc textarea:focus,
+    .profile-card-nc select:focus {
+        outline: none !important;
+        border-color: var(--primary-color) !important;
+        background-color: #18181B !important;
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1) !important;
     }
 
     .profile-card-nc ::placeholder {
