@@ -261,7 +261,7 @@
             {% csrf_token %}
 
             <div class="form-group-nc">
-                <label class="form-label-nc">Enter your Name</label>
+                <label class="form-label-nc">Enter Name</label>
                 <input type="text" name="username" id="id_username" class="form-control-nc" placeholder="Your name"
                     value="{{ form.username.value|default:'' }}" autocomplete="username" required>
                 {% if form.username.errors %}
