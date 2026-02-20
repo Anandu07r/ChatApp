@@ -1,22 +1,26 @@
 import os
 from pathlib import Path
 
-
 try:
     from dotenv import load_dotenv
     load_dotenv()
 except:
     pass
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-dev-key")
 
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-secret-key")
-
-DEBUG = os.getenv("DEBUG", "True") == "True"
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
+
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    "CSRF_TRUSTED_ORIGINS",
+    "https://*.onrender.com,https://*.railway.app"
+).split(",")
 
 
 
@@ -36,6 +40,7 @@ INSTALLED_APPS = [
 
 
 
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -46,6 +51,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
 
 
 
@@ -77,7 +83,6 @@ WSGI_APPLICATION = "chat_app.wsgi.application"
 
 
 
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -92,6 +97,7 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
     }
 }
+
 
 
 
@@ -113,6 +119,7 @@ USE_TZ = True
 
 
 
+
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
@@ -128,7 +135,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 
+
 AUTH_USER_MODEL = "users.CustomUser"
+
+
 
 
 
@@ -147,3 +157,13 @@ EMAIL_HOST_USER = os.getenv("EMAIL_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASS")
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+
+
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = "DENY"
