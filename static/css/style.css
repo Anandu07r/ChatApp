@@ -552,11 +552,12 @@ body {
     font-size: 16px;
     font-weight: 600;
     margin: 0;
+    color: #1A1A1A;
 }
 
 .status-text {
     font-size: 13px;
-    color: var(--text-muted);
+    color: #666666;
     margin: 0;
     display: flex;
     align-items: center;
@@ -653,10 +654,9 @@ body {
     border-radius: 20px;
     font-size: 15px;
     line-height: 1.5;
-    background-color: #3F3F46;
-    /* Slightly lighter Zinc 700 */
-    color: #FFFFFF !important;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: #E8E8EB;
+    color: #1A1A1A !important;
+    border: 1px solid #D0D0D5;
     border-top-left-radius: 5px;
 }
 
@@ -670,7 +670,7 @@ body {
 
 .msg-meta {
     font-size: 11px;
-    color: #E2E8F0 !important;
+    color: #666666 !important;
     margin-top: 6px;
     display: flex;
     gap: 5px;
@@ -679,23 +679,7 @@ body {
 .sender-name {
     font-size: 12px;
     font-weight: 500;
-    color: #A1A1AA !important;
-    /* Muted but visible */
-    margin-top: 5px;
-}
-
-.read-status {
-    color: #A0AEC0;
-}
-
-.message-row.me .read-status {
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.sender-name {
-    font-size: 12px;
-    font-weight: 500;
-    color: #CBD5E0;
+    color: #333333 !important;
     margin-top: 5px;
 }
 

@@ -127,7 +127,7 @@
                 <div class="bubble-container">
                     <div class="message-bubble">{{ msg.message }}</div>
                     <div class="msg-meta">
-                        {{ msg.timestamp|date:"H:i" }}
+                        {{ msg.timestamp|date:"h:i A" }}
                         {% if msg.sender == user %}
                         <span class="read-status">
                             {% if msg.is_read %}
